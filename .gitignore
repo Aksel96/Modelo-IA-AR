@@ -1,0 +1,10 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+salida/
+# Dataset: se versiona solo la estructura de carpetas, no las imágenes
+data/*/images/*
+data/*/labels/*
+!data/*/images/.gitkeep
+!data/*/labels/.gitkeep
