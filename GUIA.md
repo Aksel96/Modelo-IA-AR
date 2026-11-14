@@ -49,7 +49,7 @@ Reglas:
 
 **Cuántos datos:** al entrenar desde cero, apunta a **≥ 300 imágenes por clase** (mejor 500+), con fondos, luces, distancias y ángulos variados, y objetos parciales o con oclusión.
 
-**Cómo etiquetar:** usa [LabelImg](https://github.com/HumanSignal/labelImg), [CVAT](https://www.cvat.ai/), [Roboflow](https://roboflow.com/) o [Label Studio](https://labelstud.io/) y exporta en **formato YOLO** (el orden de clases debe coincidir con `CLASES`).
+**Cómo etiquetar:** guía detallada en [GUIA_ETIQUETADO.md](GUIA_ETIQUETADO.md). Herramientas: [LabelImg](https://github.com/HumanSignal/labelImg), [CVAT](https://www.cvat.ai/), [Roboflow](https://roboflow.com/) o [Label Studio](https://labelstud.io/) y exporta en **formato YOLO** (el orden de clases debe coincidir con `CLASES`).
 
 ## 4. Verificar el pipeline (opcional)
 ```bash
