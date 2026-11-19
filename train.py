@@ -14,9 +14,14 @@ def main():
     ap.add_argument("--epocas", type=int, default=C.EPOCAS)
     ap.add_argument("--batch", type=int, default=C.BATCH_SIZE)
     ap.add_argument("--lr", type=float, default=C.LR_INICIAL)
+    ap.add_argument("--patience", type=int, default=40,
+                    help="épocas sin mejorar val_loss antes de detener el entrenamiento")
     args = ap.parse_args()
     C.BATCH_SIZE = args.batch
     C.SALIDA_DIR.mkdir(parents=True, exist_ok=True)
+
+    gpus = tf.config.list_physical_devices("GPU")
+    print(f"GPUs detectadas: {gpus}" if gpus else "AVISO: TensorFlow NO ve la GPU (entrenará en CPU)")
 
     ds_train = construir_dataset("train", entrenamiento=True)
     ds_val = construir_dataset("val", entrenamiento=False)
@@ -32,8 +37,10 @@ def main():
         # Reduce el learning rate cuando la validación se estanca.
         tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.5,
                                              patience=5, min_lr=1e-6, verbose=1),
-        tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=20,
+        tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=args.patience,
                                          restore_best_weights=True),
+        # Historial por época (loss, val_loss, lr) para diagnosticar el entrenamiento.
+        tf.keras.callbacks.CSVLogger(str(C.SALIDA_DIR / "historial.csv")),
     ]
     modelo.fit(ds_train, validation_data=ds_val, epochs=args.epocas, callbacks=callbacks)
     print(f"Mejor modelo guardado en {C.MEJOR_MODELO}")
