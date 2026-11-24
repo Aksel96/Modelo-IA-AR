@@ -20,6 +20,9 @@ def main():
     C.BATCH_SIZE = args.batch
     C.SALIDA_DIR.mkdir(parents=True, exist_ok=True)
 
+    gpus = tf.config.list_physical_devices("GPU")
+    print(f"GPUs detectadas: {gpus}" if gpus else "AVISO: TensorFlow NO ve la GPU (entrenará en CPU)")
+
     ds_train = construir_dataset("train", entrenamiento=True)
     ds_val = construir_dataset("val", entrenamiento=False)
 
@@ -36,6 +39,8 @@ def main():
                                              patience=5, min_lr=1e-6, verbose=1),
         tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=args.paciencia,
                                          restore_best_weights=True),
+        # Historial por época (loss, val_loss, lr) para diagnosticar el entrenamiento.
+        tf.keras.callbacks.CSVLogger(str(C.SALIDA_DIR / "historial.csv")),
     ]
     modelo.fit(ds_train, validation_data=ds_val, epochs=args.epocas, callbacks=callbacks)
     print(f"Mejor modelo guardado en {C.MEJOR_MODELO}")
