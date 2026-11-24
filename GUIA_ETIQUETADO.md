@@ -47,11 +47,11 @@ labelImg data/train/images
 2. *Change Save Dir* → `data/train/labels`.
 3. Crea/edita `classes.txt` con las 5 clases **en el orden de `CLASES`**:
    ```
-   moneda
-   laptop
    boligrafo
-   raton
+   laptop
    libro
+   moneda
+   mouse
    ```
 4. Atajos: `W` crear caja, `D` siguiente imagen, `A` anterior, `Ctrl+S` guardar, `Del` borrar caja. Activa *Auto Save mode*.
 5. Elimina el `classes.txt` que genera dentro de `labels/` si estorba (el proyecto ignora archivos que no sean `<imagen>.txt`, pero mantén una copia fuera).

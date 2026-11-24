@@ -7,7 +7,7 @@ from pathlib import Path
 
 # ---------------------------------------------------------------- Clases
 # El índice en esta lista == id de clase en los .txt de YOLO (0..4).
-CLASES = ["moneda", "laptop", "boligrafo", "raton", "libro"]
+CLASES = ["boligrafo", "laptop", "libro", "moneda", "mouse"]
 NUM_CLASES = len(CLASES)          # sin contar el fondo
 NUM_CLASES_CON_FONDO = NUM_CLASES + 1   # índice 0 = fondo, 1..N = objetos
 
@@ -37,6 +37,7 @@ BATCH_SIZE = 16
 EPOCAS = 150
 LR_INICIAL = 1e-3
 RATIO_NEGATIVOS = 3               # hard negative mining 3:1
+PACIENCIA = 30                    # épocas sin mejora antes de detenerse (EarlyStopping)
 
 # ---------------------------------------------------------------- Inferencia / evaluación
 UMBRAL_SCORE = 0.5
