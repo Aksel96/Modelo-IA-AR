@@ -35,7 +35,7 @@ Reglas:
 - Cada imagen tiene un `.txt` **con el mismo nombre** (`foto001.jpg` ↔ `foto001.txt`).
 - Formatos de imagen: `.jpg .jpeg .png .bmp`.
 - Cada línea del `.txt` es un objeto: `clase cx cy w h`
-  - `clase`: índice según `CLASES` en `config.py` → `0` moneda, `1` laptop, `2` boligrafo, `3` raton, `4` libro.
+  - `clase`: índice según `CLASES` en `config.py` → `0` boligrafo, `1` laptop, `2` libro, `3` moneda, `4` mouse.
   - `cx cy w h`: centro y tamaño de la caja, **normalizados entre 0 y 1** (dividiendo por ancho/alto de la imagen).
   - Ejemplo (`foto001.txt`): 
     ```

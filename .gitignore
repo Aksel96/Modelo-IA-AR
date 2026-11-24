@@ -1,4 +1,5 @@
 .venv/
+.venv_wsl/
 venv/
 __pycache__/
 *.pyc
@@ -8,3 +9,5 @@ data/*/images/*
 data/*/labels/*
 !data/*/images/.gitkeep
 !data/*/labels/.gitkeep
+/Recursos
+repartir_recursos.py

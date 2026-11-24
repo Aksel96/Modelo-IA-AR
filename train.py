@@ -14,6 +14,8 @@ def main():
     ap.add_argument("--epocas", type=int, default=C.EPOCAS)
     ap.add_argument("--batch", type=int, default=C.BATCH_SIZE)
     ap.add_argument("--lr", type=float, default=C.LR_INICIAL)
+    ap.add_argument("--paciencia", type=int, default=C.PACIENCIA,
+                    help="Épocas sin mejora en val_loss antes de detener el entrenamiento")
     args = ap.parse_args()
     C.BATCH_SIZE = args.batch
     C.SALIDA_DIR.mkdir(parents=True, exist_ok=True)
@@ -32,7 +34,7 @@ def main():
         # Reduce el learning rate cuando la validación se estanca.
         tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.5,
                                              patience=5, min_lr=1e-6, verbose=1),
-        tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=20,
+        tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=args.paciencia,
                                          restore_best_weights=True),
     ]
     modelo.fit(ds_train, validation_data=ds_val, epochs=args.epocas, callbacks=callbacks)
