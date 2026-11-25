@@ -1,0 +1,15 @@
+Run 6 (E6b-EXIF: APLICAR_EXIF=1, BN_MOMENTUM_BACKBONE=0.99, semilla 42) sin recalibrar - salida de evaluate.py
+Comando: APLICAR_EXIF=1 python evaluate.py --modelo archivo/best_m6.keras --score 0.5
+Modelo evaluado: archivo/best_m6.keras, SHA256 24b06622f628b0a791b606072e74ea88185f8712d8ebbb1c3201708fb1b99d73 (mejor val_loss 1.9233, época 78)
+Configuración impresa por train.py: APLICAR_EXIF=1 | BN_MOMENTUM_BACKBONE=0.99 (None = 0.999 de Keras) | semilla=42 | batch=16 | lr=0.001
+Transcrito de la salida que pegó el usuario (ejecutada por el usuario en WSL2, TF 2.22.0-rc1, GPU); las líneas de log de TF/XLA se omiten.
+
+  AP@0.5 boligrafo   : 0.552  (GT=250)
+  AP@0.5 laptop      : 0.995  (GT=58)
+  AP@0.5 libro       : 0.901  (GT=88)
+  AP@0.5 moneda      : 0.979  (GT=168)
+  AP@0.5 mouse       : 0.956  (GT=60)
+
+Precision (score>=0.5): 0.921
+Recall    (score>=0.5): 0.657
+mAP@0.5: 0.877

@@ -16,9 +16,19 @@ def main():
     ap.add_argument("--lr", type=float, default=C.LR_INICIAL)
     ap.add_argument("--paciencia", type=int, default=C.PACIENCIA,
                     help="Épocas sin mejora en val_loss antes de detener el entrenamiento")
+    ap.add_argument("--semilla", type=int, default=None,
+                    help="Fija las semillas de Python/NumPy/TensorFlow (pesos iniciales y orden de los datos) para que "
+                         "dos entrenamientos comparables partan igual. Sin esta opción, no se fija ninguna (como antes).")
     args = ap.parse_args()
     C.BATCH_SIZE = args.batch
     C.SALIDA_DIR.mkdir(parents=True, exist_ok=True)
+    if args.semilla is not None:
+        tf.keras.utils.set_random_seed(args.semilla)
+    print(f"Configuración: APLICAR_EXIF={int(C.APLICAR_EXIF)} | BN_MOMENTUM_BACKBONE={C.BN_MOMENTUM_BACKBONE} "
+          f"(None = 0.999 de Keras) | semilla={args.semilla} | batch={args.batch} | lr={args.lr}")
+
+    gpus = tf.config.list_physical_devices("GPU")
+    print(f"GPUs detectadas: {gpus}" if gpus else "AVISO: TensorFlow NO ve la GPU (entrenará en CPU)")
 
     ds_train = construir_dataset("train", entrenamiento=True)
     ds_val = construir_dataset("val", entrenamiento=False)
@@ -36,6 +46,8 @@ def main():
                                              patience=5, min_lr=1e-6, verbose=1),
         tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=args.paciencia,
                                          restore_best_weights=True),
+        # Historial por época (loss, val_loss, lr) para diagnosticar el entrenamiento.
+        tf.keras.callbacks.CSVLogger(str(C.SALIDA_DIR / "historial.csv")),
     ]
     modelo.fit(ds_train, validation_data=ds_val, epochs=args.epocas, callbacks=callbacks)
     print(f"Mejor modelo guardado en {C.MEJOR_MODELO}")

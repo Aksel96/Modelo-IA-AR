@@ -109,14 +109,15 @@ Anota el tiempo por época. Debería ser claramente menor que los 1–5 min de l
 Con 8 GB o más de VRAM, `--batch 32` va bien. Si tienes menos, usa `--batch 16`.
 
 ```bash
-nohup python train.py --epocas 200 --batch 32 --patience 40 > salida_entrenamiento.log 2>&1 &
+nohup python train.py --epocas 200 --batch 32 --paciencia 40 > salida_entrenamiento.log 2>&1 &
 tail -f salida_entrenamiento.log
 ```
 
 - `nohup ... &` mantiene el entrenamiento aunque cierres la terminal. Con `tail -f` sigues el progreso; `Ctrl+C` solo cierra el `tail`.
-- `--patience 40` es el cambio que pediste: ahora se detiene tras 40 épocas sin mejora (antes 20).
+- `--paciencia 40` (el argumento real de `train.py`) es el cambio que pediste: ahora se detiene tras 40 épocas sin mejora (antes 20).
 - `--epocas 200` sube el tope para que haya margen.
 - El mejor modelo se guarda en `salida/best_model.keras`, y el historial por época en `salida/historial.csv`.
+- **Orientación EXIF:** para entrenar con la corrección, antepón `APLICAR_EXIF=1` (p. ej. `APLICAR_EXIF=1 nohup python train.py ...`) y úsala también al evaluar. Ver README.
 
 Para parar un entrenamiento (si hay que cortarlo): `pkill -f train.py`. El mejor modelo hasta ese momento ya está guardado.
 
@@ -149,6 +150,7 @@ La primera ejecución no tiene mAP. Mídelo ahora en las dos para compararlas co
 
 ```bash
 python evaluate.py --score 0.5            # modelo nuevo (salida/best_model.keras)
+# Si el modelo se entrenó con EXIF:  APLICAR_EXIF=1 python evaluate.py --score 0.5
 ```
 
 Para el modelo anterior, copia temporalmente su `best_model.keras` a `salida/`, evalúa, y restaura el nuevo. O renómbralos: `best_nuevo.keras` y `best_viejo.keras`.

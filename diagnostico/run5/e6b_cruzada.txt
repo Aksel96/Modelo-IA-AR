@@ -1,0 +1,35 @@
+E6b - evaluación cruzada del marco EXIF (Run 6 = E6b-EXIF)
+Transcrito de las salidas que pegó el usuario (evaluate.py, ejecutado por el usuario en WSL2, TF 2.22.0-rc1, GPU); las líneas de log de TF/XLA se omiten.
+Condiciones: val (313 imágenes), score 0.5 (solo afecta a precisión/recall), IoU 0.5 fijo; el AP usa todas las detecciones con score > 0.01.
+
+Modelo: archivo/best_m6.keras, SHA256 24b06622f628b0a791b606072e74ea88185f8712d8ebbb1c3201708fb1b99d73
+(entrenado con APLICAR_EXIF=1, BN_MOMENTUM_BACKBONE=0.99, semilla 42; mejor val_loss 1.9233 en la época 78)
+
+--- C1. Marco de entrenamiento (válido): APLICAR_EXIF=1 python evaluate.py --modelo archivo/best_m6.keras --score 0.5
+  (misma salida que archivo/evaluate_m6.txt)
+  AP@0.5 boligrafo   : 0.552  (GT=250)
+  AP@0.5 laptop      : 0.995  (GT=58)
+  AP@0.5 libro       : 0.901  (GT=88)
+  AP@0.5 moneda      : 0.979  (GT=168)
+  AP@0.5 mouse       : 0.956  (GT=60)
+Precision (score>=0.5): 0.921
+Recall    (score>=0.5): 0.657
+mAP@0.5: 0.877
+
+--- C2. Marco cruzado: APLICAR_EXIF=0 python evaluate.py --modelo archivo/best_m6.keras --score 0.5
+  AP@0.5 boligrafo   : 0.552  (GT=250)
+  AP@0.5 laptop      : 0.799  (GT=58)
+  AP@0.5 libro       : 0.901  (GT=88)
+  AP@0.5 moneda      : 0.152  (GT=168)
+  AP@0.5 mouse       : 0.953  (GT=60)
+Precision (score>=0.5): 0.708
+Recall    (score>=0.5): 0.502
+mAP@0.5: 0.671
+
+Lectura:
+- Bolígrafo y libro (sin imágenes con EXIF 3/6/8) dan exactamente el mismo AP en los dos marcos y en procesos distintos;
+  mouse (tampoco tiene EXIF) varía 0.003 (ruido entre procesos).
+- Laptop 0.995 -> 0.799 y moneda 0.979 -> 0.152: son las dos clases con imágenes de orientación 3/6/8 (70/263 y 177/300).
+- C2 NO es una métrica válida del modelo: con APLICAR_EXIF=0 las cajas de val de esas imágenes están en el marco orientado
+  y los píxeles no, así que la caída mezcla el fallo del modelo sobre imágenes sin orientar con el desajuste etiqueta-píxel.
+  Lo que sí muestra: el modelo debe recibir imágenes orientadas en inferencia (implicación para la app, por verificar).

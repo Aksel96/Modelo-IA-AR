@@ -1,6 +1,6 @@
 # Guía de etiquetado de imágenes (formato YOLO)
 
-Objetivo: dibujar una caja alrededor de cada objeto (moneda, laptop, boligrafo, raton, libro) y guardar un `.txt` por imagen con el formato que lee este proyecto.
+Objetivo: dibujar una caja alrededor de cada objeto (boligrafo, laptop, libro, moneda, mouse) y guardar un `.txt` por imagen con el formato que lee este proyecto.
 
 ## 1. Formato de etiqueta
 Un `.txt` por imagen, **mismo nombre** (`foto001.jpg` → `foto001.txt`). Una línea por objeto:
@@ -9,15 +9,16 @@ clase cx cy w h
 ```
 | Campo | Significado |
 |---|---|
-| `clase` | Índice: 0 moneda, 1 laptop, 2 boligrafo, 3 raton, 4 libro (orden de `CLASES` en `config.py`) |
+| `clase` | Índice: 0 boligrafo, 1 laptop, 2 libro, 3 moneda, 4 mouse (orden de `CLASES` en `config.py`) |
 | `cx`, `cy` | Centro de la caja ÷ ancho / alto de la imagen |
 | `w`, `h` | Ancho / alto de la caja ÷ ancho / alto de la imagen |
 
 Ejemplo (imagen 640×480, moneda en x 300–380, y 200–280):
 `cx=340/640=0.531`, `cy=240/480=0.5`, `w=80/640=0.125`, `h=80/480=0.167`
 ```
-0 0.531 0.500 0.125 0.167
+3 0.531 0.500 0.125 0.167
 ```
+(moneda = índice 3). Las cajas se dibujan sobre la imagen **tal como se ve orientada**; si la foto trae etiqueta EXIF de orientación, el entrenamiento debe ejecutarse con `APLICAR_EXIF=1` (ver README).
 Todos los valores deben estar entre 0 y 1. Si ves números mayores que 1, la herramienta exportó en píxeles: está mal.
 
 ## 2. Antes de etiquetar: tomar buenas fotos

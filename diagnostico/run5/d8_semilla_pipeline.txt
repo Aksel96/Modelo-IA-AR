@@ -1,0 +1,4 @@
+(a) shuffle puro: misma semilla da el mismo orden: True
+(a) shuffle puro: la 2.ª época difiere de la 1.ª (reshuffle): True
+(b) barajado del pipeline: misma semilla igual: True | semilla distinta igual: False
+(c) aumentos aleatorios (map paralelo), misma semilla: imágenes idénticas 2 de 16

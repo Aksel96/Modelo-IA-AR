@@ -1,0 +1,29 @@
+Épocas: 38 | mejor época 8 (val_loss 7.9220, loss 4.8737) | final: loss 2.5638, val_loss 14.4109
+val_loss respecto al mínimo (época 8), primera época posterior que lo supera en: +2%: 10, +10%: 10, +25%: 13, +50%: 20, +75%: 32
+Épocas con val_loss < mínimo+0.5 antes de la 8: 2
+
+Brecha val_loss/loss (la loss de train lleva aumentos, la de val no): 
+  época  1: loss 8.552 | val_loss 10.154 | cociente 1.19 | diferencia +1.60 | LR 0.001
+  época  4: loss 5.459 | val_loss 8.787 | cociente 1.61 | diferencia +3.33 | LR 0.001
+  época  8: loss 4.874 | val_loss 7.922 | cociente 1.63 | diferencia +3.05 | LR 0.001
+  época  9: loss 4.671 | val_loss 8.075 | cociente 1.73 | diferencia +3.40 | LR 0.001
+  época 10: loss 4.400 | val_loss 8.859 | cociente 2.01 | diferencia +4.46 | LR 0.001
+  época 13: loss 3.971 | val_loss 10.950 | cociente 2.76 | diferencia +6.98 | LR 0.001
+  época 18: loss 3.336 | val_loss 11.409 | cociente 3.42 | diferencia +8.07 | LR 0.0005
+  época 23: loss 3.004 | val_loss 13.371 | cociente 4.45 | diferencia +10.37 | LR 0.00025
+  época 28: loss 2.771 | val_loss 13.751 | cociente 4.96 | diferencia +10.98 | LR 0.000125
+  época 33: loss 2.583 | val_loss 14.272 | cociente 5.53 | diferencia +11.69 | LR 6.25e-05
+  época 38: loss 2.564 | val_loss 14.411 | cociente 5.62 | diferencia +11.85 | LR 3.13e-05
+
+Velocidad de cambio (promedio por época):
+  épocas 1→8                       loss -0.526/época | val_loss -0.319/época
+  épocas 8→13 (LR 1e-3)            loss -0.181/época | val_loss +0.606/época
+  épocas 13→23 (LR 5e-4..2.5e-4)   loss -0.097/época | val_loss +0.242/época
+  épocas 23→38 (LR ≤1.25e-4)       loss -0.029/época | val_loss +0.069/época
+
+Subidas de val_loss entre épocas consecutivas tras la 8: 22 de 30; bajadas: 8 (épocas [14, 15, 18, 22, 24, 31, 34, 37])
+Correlación (épocas 8→38) loss vs val_loss: -0.975  (loss baja, val sube)
+
+LR: la val_loss ya había subido +38% sobre el mínimo (época 13) cuando ReduceLROnPlateau actuó por primera vez; con patience=5 la primera reducción solo puede ocurrir 5 épocas sin mejora después de la mejor (8+5=13).
+Tras la primera reducción (época 13→14) val_loss baja de 10.95 a 10.30 pero no vuelve a bajar de 10.25; el mejor checkpoint (época 8) no se supera nunca.
+Referencia Runs 3/4 (bitácora, sin historial en el repo): Run 3 mejor val_loss 8.1028 (~época 9), loss final 2.2294; Run 4 mejor val_loss 7.5415 (época 11), loss final 3.3623. Mismo patrón: mínimo temprano y deterioro posterior.

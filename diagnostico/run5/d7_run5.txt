@@ -1,0 +1,16 @@
+Etiqueta run5 | modelo archivo/best_m5.keras | APLICAR_EXIF=True | TF 2.22.0-rc1 | GPU: ['/physical_device:GPU:0']
+variante (score 0.5, IoU 0.5)                        boligrafo    laptop     libro    moneda     mouse       mAP
+V1 evaluar(original)                                     0.001     0.191     0.102     0.000     0.003     0.059
+V2 evaluar(original) otra vez                            0.001     0.191     0.102     0.000     0.003     0.059
+V3 evaluar(copia re-guardada)                            0.001     0.191     0.102     0.000     0.003     0.059
+V4 evaluar(copia re-guardada) otra vez                   0.001     0.191     0.102     0.000     0.003     0.059
+V5 evaluar(original) tras actividad training=True        0.001     0.191     0.102     0.000     0.003     0.059
+
+--- Comparación de pesos: original vs copia re-guardada ---
+pesos: 323 vs 323 | diferencia máxima absoluta entre pesos: 0.000e+00 | pesos distintos: 0
+momentum BN original vs copia iguales: True
+
+--- Salidas crudas de predict (cajas, scores) sobre val ---
+original vs original (repetición)    max|dif cajas| 0.000e+00 | max|dif scores| 0.000e+00 | scores>0.01 (clases 1..N): 2773806 vs 2773806
+original vs copia re-guardada        max|dif cajas| 0.000e+00 | max|dif scores| 0.000e+00 | scores>0.01 (clases 1..N): 2773806 vs 2773806
+score máximo de clase en val (original): 0.4114 | mediana del máximo por imagen: 0.4113

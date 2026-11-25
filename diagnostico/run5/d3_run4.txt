@@ -1,0 +1,59 @@
+Etiqueta: run4 | modelo: /tmp/run4.keras | APLICAR_EXIF=False | TF 2.22.0-rc1 | GPU: [PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
+
+===== PÉRDIDA en 'val' (sin aumentos), 313 imágenes =====
+perdida_ssd (código real, media ponderada por lote): 7.5415 | réplica por componentes: 7.5415 | diferencia 1.37e-08
+Componentes globales por positivo: cls_pos 3.392 + cls_neg(minados) 1.905 + caja 2.728 = 8.025
+clase       img   pos  cls_pos  cls_neg    caja   total |  p(clase)  acierto p(fondo) FP-neg/img
+boligrafo    53   523    5.090    1.732   3.813  10.634 |     0.017    0.000    0.852        1.8
+laptop       58   206    2.634    1.863   1.691   6.188 |     0.119    0.000    0.603        0.3
+libro        88   255    2.365    2.235   1.890   6.490 |     0.161    0.000    0.646        0.9
+moneda       67   416    2.516    1.932   2.630   7.078 |     0.101    0.000    0.845        2.0
+mouse        47   199    2.862    1.929   2.226   7.017 |     0.070    0.000    0.748        1.0
+
+===== PÉRDIDA en 'train' (sin aumentos), 1097 imágenes =====
+perdida_ssd (código real, media ponderada por lote): 7.5301 | réplica por componentes: 7.5301 | diferencia 0.00e+00
+Componentes globales por positivo: cls_pos 3.308 + cls_neg(minados) 1.909 + caja 2.673 = 7.890
+clase       img   pos  cls_pos  cls_neg    caja   total |  p(clase)  acierto p(fondo) FP-neg/img
+boligrafo   185  1750    4.991    1.741   3.697  10.430 |     0.018    0.000    0.847        1.7
+laptop      205   696    2.546    1.909   1.681   6.136 |     0.119    0.000    0.600        0.3
+libro       308   941    2.444    2.151   1.957   6.552 |     0.152    0.000    0.664        0.9
+moneda      233  1530    2.495    1.885   2.574   6.954 |     0.103    0.000    0.847        2.0
+mouse       166   635    2.745    2.073   2.238   7.056 |     0.073    0.000    0.742        1.1
+
+===== DETECCIÓN en 'val' (cada 1ª imagen, 313 imágenes, NMS por clase como evaluate.py) =====
+AP@0.5 por clase: boligrafo 0.002, laptop 0.177, libro 0.144, moneda 0.000, mouse 0.003  | mAP 0.065
+AP@0.5 AGNÓSTICO de clase (solo localización/objectness): 0.112
+ score>=  detecciones    TP  precisión  recall
+     0.5            0     0      0.000   0.000
+     0.3            0     0      0.000   0.000
+     0.2        15963    52      0.003   0.083
+     0.1        30987   163      0.005   0.261
+    0.05        78250   183      0.002   0.293
+    0.02        78250   183      0.002   0.293
+
+Para cada GT: clase de la detección de mayor score (score>0.01, tras NMS) con IoU>=0.5; última columna = ninguna.
+GT / detectada   boligrafo    laptop     libro    moneda     mouse   ninguna  IoU máx med.
+boligrafo               29         0        13         0        51       157          0.43
+laptop                   0         1        53         0         2         2          0.64
+libro                    0         0        53         0         9        26          0.59
+moneda                   2         0         4         0        36       126          0.39
+mouse                    4         0        24         0        20        12          0.60
+
+===== DETECCIÓN en 'train' (cada 4ª imagen, 275 imágenes, NMS por clase como evaluate.py) =====
+AP@0.5 por clase: boligrafo 0.001, laptop 0.176, libro 0.125, moneda 0.000, mouse 0.003  | mAP 0.061
+AP@0.5 AGNÓSTICO de clase (solo localización/objectness): 0.117
+ score>=  detecciones    TP  precisión  recall
+     0.5            0     0      0.000   0.000
+     0.3            0     0      0.000   0.000
+     0.2        14025    50      0.004   0.091
+     0.1        27225   150      0.006   0.273
+    0.05        68750   166      0.002   0.302
+    0.02        68750   166      0.002   0.302
+
+Para cada GT: clase de la detección de mayor score (score>0.01, tras NMS) con IoU>=0.5; última columna = ninguna.
+GT / detectada   boligrafo    laptop     libro    moneda     mouse   ninguna  IoU máx med.
+boligrafo               24         0         9         0        42       143          0.43
+laptop                   0         0        47         0         1         3          0.66
+libro                    1         0        51         0         5        20          0.60
+moneda                   0         0         6         0        34       109          0.41
+mouse                    3         0        23         0        15        13          0.58

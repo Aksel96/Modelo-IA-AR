@@ -1,0 +1,15 @@
+Run 5 (E1: orientación EXIF activada) - salida de evaluate.py
+Comando: APLICAR_EXIF=1 python evaluate.py --score 0.5
+Modelo evaluado: salida/best_model.keras (época 8, val_loss 7.9220) = archivo/best_m5.keras
+SHA256 del modelo: 0f092594775bc95980befcbee367046c91e7a0fdfcd9236506153607ead93526
+Transcrito de la salida que pegó el usuario (ejecutada por el usuario en WSL2); las líneas de log de TF/XLA se omiten.
+
+  AP@0.5 boligrafo   : 0.001  (GT=250)
+  AP@0.5 laptop      : 0.163  (GT=58)
+  AP@0.5 libro       : 0.109  (GT=88)
+  AP@0.5 moneda      : 0.000  (GT=168)
+  AP@0.5 mouse       : 0.003  (GT=60)
+
+Precision (score>=0.5): 0.000
+Recall    (score>=0.5): 0.000
+mAP@0.5: 0.055

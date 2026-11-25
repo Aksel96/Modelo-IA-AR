@@ -1,6 +1,6 @@
 # Detector de objetos SSD-MobileNetV2 **sin pesos preentrenados**
 
-Detecta 5 clases (moneda, laptop, boligrafo, raton, libro), se entrena desde cero
+Detecta 5 clases (`boligrafo, laptop, libro, moneda, mouse`, orden de `CLASES` en `config.py`), se entrena desde cero
 (`weights=None`, nunca se descarga ImageNet) y se exporta a TFLite para una app de RA.
 
 > 📘 Guía completa paso a paso (instalación, estructura del dataset, entrenamiento y uso del `.tflite`): [GUIA.md](GUIA.md)
@@ -32,12 +32,20 @@ python evaluate.py                     # Precision, Recall, mAP@0.5 en val/
 python export_tflite.py --cuantizar    # salida/detector.tflite + salida/labels.txt
 ```
 
+## Orientación EXIF (bandera `APLICAR_EXIF`)
+**Orientación EXIF.** Las etiquetas están dibujadas sobre la imagen *orientada* (como se ve en cualquier visor), pero `tf.io.decode_image` devuelve los píxeles sin rotar. Con `APLICAR_EXIF=1` el pipeline aplica la orientación EXIF antes del resize (modo por defecto = legacy, sin rotar). Úsala **igual al entrenar y al evaluar**: evaluar con la bandera desactivada un modelo entrenado con ella da resultados no válidos.
+```bash
+APLICAR_EXIF=1 python train.py --epocas 150
+APLICAR_EXIF=1 python evaluate.py --score 0.5
+```
+Tests: `python -B -m unittest tests.test_exif -v` (no entrenan).
+
 ## Archivos
 | Archivo | Función |
 |---|---|
 | `config.py` | Clases, rutas e hiperparámetros |
 | `anchors.py` | Anchors SSD, codificación/decodificación, IoU |
-| `data.py` | Lectura YOLO, `tf.data`, aumento (flip, brillo, contraste), asignación de anchors |
+| `data.py` | Lectura YOLO, orientación EXIF opcional, `tf.data`, aumento (flip, zoom, brillo, contraste), asignación de anchors |
 | `model.py` | SSD con `MobileNetV2(weights=None)` + cabezas de clasificación/regresión |
 | `losses.py` | Smooth L1 + `SparseCategoricalCrossentropy` con hard negative mining 3:1 |
 | `train.py` | `model.fit`, Adam, `ModelCheckpoint`, `ReduceLROnPlateau`, `EarlyStopping` |
@@ -46,7 +54,7 @@ python export_tflite.py --cuantizar    # salida/detector.tflite + salida/labels.
 
 ## Salida del TFLite
 - **Entrada**: `[1, 256, 256, 3]` float32 con valores en **[0, 1]** (la normalización va dentro del modelo).
-- **Salidas** (identifícalas por su shape, el orden de los tensores en TFLite puede variar): `boxes [1, 1364, 4]` = (ymin, xmin, ymax, xmax) normalizado y `scores [1, 1364, 6]`
+- **Salidas** (identifícalas por su shape, el orden de los tensores en TFLite puede variar): `boxes [1, 2046, 4]` = (ymin, xmin, ymax, xmax) normalizado y `scores [1, 2046, 6]`
   (probabilidades; índice 0 = fondo, 1..5 = clases en el orden de `labels.txt`, que ya incluye "fondo" en la línea 0).
 - **NMS**: se aplica en la app (por clase: filtrar score ≥ 0.5, IoU ≤ 0.45), no va dentro del grafo.
 

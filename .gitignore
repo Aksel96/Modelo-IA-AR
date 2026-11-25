@@ -9,5 +9,7 @@ data/*/images/*
 data/*/labels/*
 !data/*/images/.gitkeep
 !data/*/labels/.gitkeep
+# Dataset: se incluye completo para análisis
+# (se eliminó la exclusión de images y labels)
 /Recursos
 repartir_recursos.py

@@ -1,0 +1,49 @@
+Validación de la réplica instrumentada frente a data._random_zoom (p=1.0, semilla igual): 400/400 casos idénticos (cajas e imagen).
+
+===== TRAIN: 1097 imágenes × 5 pasadas con zoom aplicado (p=1.0) = 10870 GT-observaciones =====
+clase         obs descartado desc. con vis≥30%  vis≥50%  vis≥70% cent. fuera cent.dentro y <0.02 conservado vis<50% conserv. vis<80%
+boligrafo    4235       9.5%              3.4%     0.0%     0.0%        9.5%                0.0%               2.0%            23.4%
+laptop       1025       0.0%              0.0%     0.0%     0.0%        0.0%                0.0%               3.6%            55.1%
+libro        1540       0.0%              0.0%     0.0%     0.0%        0.0%                0.0%               1.0%            36.9%
+moneda       3010      16.7%              5.2%     0.0%     0.0%       16.7%                0.0%               0.7%            12.8%
+mouse        1060       6.4%              3.4%     0.0%     0.0%        6.4%                0.0%               0.9%            24.8%
+TOTAL       10870       9.0%              3.1%     0.0%     0.0%
+
+Por imagen (con zoom aplicado): 
+  boligrafo  imágenes-pasada   925 | se queda sin NINGÚN objeto:   0.0% | pierde ≥1 objeto con ≥50% visible:   0.0% | objetos conservados / originales: 0.91
+  laptop     imágenes-pasada  1025 | se queda sin NINGÚN objeto:   0.0% | pierde ≥1 objeto con ≥50% visible:   0.0% | objetos conservados / originales: 1.00
+  libro      imágenes-pasada  1540 | se queda sin NINGÚN objeto:   0.0% | pierde ≥1 objeto con ≥50% visible:   0.0% | objetos conservados / originales: 1.00
+  moneda     imágenes-pasada  1165 | se queda sin NINGÚN objeto:   0.0% | pierde ≥1 objeto con ≥50% visible:   0.0% | objetos conservados / originales: 0.83
+  mouse      imágenes-pasada   830 | se queda sin NINGÚN objeto:   0.0% | pierde ≥1 objeto con ≥50% visible:   0.0% | objetos conservados / originales: 0.94
+
+Escala efectiva (caja conservada, ancho y alto del GT en 256 px tras el zoom; mediana) vs sin zoom:
+  boligrafo  sin zoom   96.0× 113.5 px | con zoom (conservadas)  115.5× 142.8 px
+  laptop     sin zoom  186.9× 187.3 px | con zoom (conservadas)  229.0× 226.1 px
+  libro      sin zoom  184.1× 156.7 px | con zoom (conservadas)  223.0× 197.8 px
+  moneda     sin zoom   59.9×  60.3 px | con zoom (conservadas)   77.4×  75.7 px
+  mouse      sin zoom  131.3× 140.5 px | con zoom (conservadas)  173.6× 179.0 px
+
+===== VAL (solo referencia; el zoom NO se aplica en val): 313 imágenes × 2 pasadas con zoom aplicado (p=1.0) = 1248 GT-observaciones =====
+clase         obs descartado desc. con vis≥30%  vis≥50%  vis≥70% cent. fuera cent.dentro y <0.02 conservado vis<50% conserv. vis<80%
+boligrafo     500       7.2%              3.0%     0.0%     0.0%        7.2%                0.0%               3.2%            23.0%
+laptop        116       0.0%              0.0%     0.0%     0.0%        0.0%                0.0%               0.0%            56.0%
+libro         176       0.0%              0.0%     0.0%     0.0%        0.0%                0.0%               0.0%            35.2%
+moneda        336      12.8%              4.2%     0.0%     0.0%       12.8%                0.0%               1.2%            14.3%
+mouse         120       4.2%              4.2%     0.0%     0.0%        4.2%                0.0%               2.5%            26.7%
+TOTAL        1248       6.7%              2.7%     0.0%     0.0%
+
+Por imagen (con zoom aplicado): 
+  boligrafo  imágenes-pasada   106 | se queda sin NINGÚN objeto:   0.0% | pierde ≥1 objeto con ≥50% visible:   0.0% | objetos conservados / originales: 0.93
+  laptop     imágenes-pasada   116 | se queda sin NINGÚN objeto:   0.0% | pierde ≥1 objeto con ≥50% visible:   0.0% | objetos conservados / originales: 1.00
+  libro      imágenes-pasada   176 | se queda sin NINGÚN objeto:   0.0% | pierde ≥1 objeto con ≥50% visible:   0.0% | objetos conservados / originales: 1.00
+  moneda     imágenes-pasada   134 | se queda sin NINGÚN objeto:   0.0% | pierde ≥1 objeto con ≥50% visible:   0.0% | objetos conservados / originales: 0.87
+  mouse      imágenes-pasada    94 | se queda sin NINGÚN objeto:   0.0% | pierde ≥1 objeto con ≥50% visible:   0.0% | objetos conservados / originales: 0.96
+
+Escala efectiva (caja conservada, ancho y alto del GT en 256 px tras el zoom; mediana) vs sin zoom:
+  boligrafo  sin zoom  110.8×  98.2 px | con zoom (conservadas)  142.8× 121.4 px
+  laptop     sin zoom  179.3× 202.7 px | con zoom (conservadas)  223.9× 231.9 px
+  libro      sin zoom  184.9× 156.0 px | con zoom (conservadas)  221.0× 196.5 px
+  moneda     sin zoom   62.1×  62.9 px | con zoom (conservadas)   80.7×  79.9 px
+  mouse      sin zoom  129.3× 142.2 px | con zoom (conservadas)  173.5× 181.0 px
+
+En entrenamiento el zoom se aplica con p=0.5: la proporción de GT perdidos por época es la mitad de la de arriba (p. ej. descarte total ≈ 4.5%).

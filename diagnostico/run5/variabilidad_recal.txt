@@ -1,0 +1,31 @@
+Variabilidad de la recalibración de BN (E6a), Fase 1. Ejecutada por el usuario en WSL2 (TF 2.22.0-rc1, GPU); líneas de log omitidas.
+Constantes: 3 pasadas, momentum 0.9, solo train, 207 pasos de lote (batch 16); evaluate.py con score 0.5 e IoU 0.5; cada checkpoint en el marco EXIF de su entrenamiento.
+Solo cambia --semilla (0, 1, 2). La semilla 0 procede de la evaluación cruzada (e6a_cruzada.txt, archivo/evaluate_m5_bnrecal.txt).
+
+Checkpoints de origen (identidad verificada por SHA256):
+  Run 4 (sin EXIF, época 11): /tmp/run4.keras = git show 794a049:archivo/best_m5.keras  SHA256 bb30e9fdc872f27b52b76582b50efd58beabb64f10dd5eeb094626c839fcbba8
+  Run 5 (EXIF, época 8)     : archivo/best_m5.keras (HEAD)                              SHA256 0f092594775bc95980befcbee367046c91e7a0fdfcd9236506153607ead93526
+
+Derivados (SHA256), todos con 116/116 estadísticas de BN cambiadas y 0 pesos más; los de /tmp no están versionados:
+  Run 4 s0 /tmp/run4_bnrecal.keras     98104b536b2828134135f32adbb957e8028005c6442088b92ae43c066279238c
+  Run 4 s1 /tmp/run4_bnrecal_s1.keras  e49d142f588e8a3b331c6996216effbf5f15b8f8ac37b875b1a00e2737103379
+  Run 4 s2 /tmp/run4_bnrecal_s2.keras  2845cf2b5ba4c3f249e1238eb56ac00f0d08a9d7878557ecf052855d590e2f26
+  Run 5 s0 archivo/best_m5_bnrecal.keras
+                                       b6631424bb330be4e1a4e3879a2ff22b1c0b2ca9cca594b5fad8477df5915a3e
+  Run 5 s1 /tmp/run5_bnrecal_s1.keras  a1902b648b79167d964e002d74a993c7657ed9bddcf7b376b210ef35102826eb
+  Run 5 s2 /tmp/run5_bnrecal_s2.keras  ed9c4276bbce28c0897dc173f431ecacb15a2831855970646af110f1d71ea013
+
+Resultados (AP@0.5 por clase y mAP; P y R con score >= 0.5):
+ checkpoint (EXIF) sem  boligrafo laptop libro moneda mouse |  mAP  |   P     R
+ Run 4 (0)          0    0.190    0.651  0.369  0.033  0.257 | 0.300 | 0.700 0.056
+ Run 4 (0)          1    0.187    0.640  0.365  0.033  0.260 | 0.297 | 0.750 0.058
+ Run 4 (0)          2    0.189    0.650  0.373  0.033  0.266 | 0.302 | 0.708 0.054
+ Run 5 (1)          0    0.059    0.525  0.290  0.329  0.212 | 0.283 | 1.000 0.006
+ Run 5 (1)          1    0.057    0.522  0.289  0.339  0.209 | 0.283 | 1.000 0.010
+ Run 5 (1)          2    0.057    0.515  0.289  0.329  0.210 | 0.280 | 1.000 0.010
+
+Resumen (3 semillas; sd = desviación típica muestral):
+ Run 4: media (rango; sd)  boligrafo 0.189 (0.003; 0.0015) | laptop 0.647 (0.011; 0.006) | libro 0.369 (0.008; 0.004) | moneda 0.033 (0.000) | mouse 0.261 (0.009; 0.005) | mAP 0.2997 (0.005; 0.0025)
+ Run 5: media (rango; sd)  boligrafo 0.058 (0.002; 0.0012) | laptop 0.521 (0.010; 0.005) | libro 0.289 (0.001; 0.0006) | moneda 0.332 (0.010; 0.006) | mouse 0.210 (0.003; 0.0015) | mAP 0.2820 (0.003; 0.0017)
+ Diferencia de medias Run 4 - Run 5: boligrafo +0.131 | laptop +0.126 | libro +0.080 | moneda -0.299 | mouse +0.051 | mAP +0.018
+ min(Run 4) - max(Run 5) por clase: +0.128 | +0.115 | +0.075 | -0.306 | +0.045 | mAP +0.014   (ninguna medida de un checkpoint solapa con las del otro)

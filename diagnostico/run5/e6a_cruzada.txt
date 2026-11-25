@@ -1,0 +1,18 @@
+Evaluación cruzada EXIF con BN recalibrado (E6a). Ejecutada por el usuario en WSL2 (TF 2.22.0-rc1, GPU); líneas de log de TF/XLA omitidas.
+Todas: score 0.5, IoU 0.5. Cada checkpoint se recalibró con recalibrar_bn.py y la bandera con la que se entrenó (3 pasadas, momentum 0.9, semilla 0).
+
+Run 4 (sin EXIF): /tmp/run4.keras SHA256 bb30e9fdc872f27b52b76582b50efd58beabb64f10dd5eeb094626c839fcbba8 (git show 794a049:archivo/best_m5.keras)
+  derivado /tmp/run4_bnrecal.keras SHA256 98104b536b2828134135f32adbb957e8028005c6442088b92ae43c066279238c (116/116 estadísticas cambiadas, 0 pesos más; no versionado)
+Run 5 (EXIF): archivo/best_m5_bnrecal.keras SHA256 b6631424bb330be4e1a4e3879a2ff22b1c0b2ca9cca594b5fad8477df5915a3e
+
+[Run 4 recalibrado] APLICAR_EXIF=0 python evaluate.py --modelo /tmp/run4_bnrecal.keras --score 0.5
+  AP boligrafo 0.190 | laptop 0.651 | libro 0.369 | moneda 0.033 | mouse 0.257 | P 0.700 | R 0.056 | mAP 0.300
+
+[Run 4 recalibrado] APLICAR_EXIF=1 python evaluate.py --modelo /tmp/run4_bnrecal.keras --score 0.5
+  AP boligrafo 0.189 | laptop 0.653 | libro 0.339 | moneda 0.056 | mouse 0.250 | P 0.708 | R 0.054 | mAP 0.297
+
+[Run 5 recalibrado] APLICAR_EXIF=1 python evaluate.py --modelo archivo/best_m5_bnrecal.keras --score 0.5   (ver archivo/evaluate_m5_bnrecal.txt)
+  AP boligrafo 0.059 | laptop 0.525 | libro 0.290 | moneda 0.329 | mouse 0.212 | P 1.000 | R 0.006 | mAP 0.283
+
+[Run 5 recalibrado] APLICAR_EXIF=0 python evaluate.py --modelo archivo/best_m5_bnrecal.keras --score 0.5
+  AP boligrafo 0.059 | laptop 0.521 | libro 0.291 | moneda 0.076 | mouse 0.208 | P 1.000 | R 0.006 | mAP 0.231

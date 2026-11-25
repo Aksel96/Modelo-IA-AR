@@ -1,0 +1,42 @@
+Etiqueta run4 | modelo /tmp/run4.keras | APLICAR_EXIF=False | TF 2.22.0-rc1
+Capas BatchNorm: 58 | momentum distintos: [0.99, 0.999] | pasos/época (train, batch 16): 69
+  peso residual del valor inicial de las estadísticas móviles tras 8 épocas (552 pasos): momentum 0.999 -> 0.58 | momentum 0.99 -> 0.0039
+  peso residual del valor inicial de las estadísticas móviles tras 11 épocas (759 pasos): momentum 0.999 -> 0.47 | momentum 0.99 -> 0.0005
+  peso residual del valor inicial de las estadísticas móviles tras 38 épocas (2622 pasos): momentum 0.999 -> 0.07 | momentum 0.99 -> 0.0000
+
+===== A. Pérdida del checkpoint según modo de BN y aumentos (lotes mezclados) =====
+conjunto aumentos    BN inferencia (medias móviles)    BN con estadísticas del lote
+train    no                                  7.8179                          4.6117
+train    sí                                  7.5364                          4.6654
+val      no                                  7.9366                          4.7593
+(Referencia: historial_m5.csv época 8 -> loss 4.8737 con aumentos y BN de lote; val_loss 7.9220 con BN de inferencia.)
+
+===== B. Recalibración de las estadísticas móviles de BN (pesos entrenables intactos) =====
+Original (evaluate.py, score 0.5):
+AP@0.5 boligrafo   : 0.001  (GT=250)
+  AP@0.5 laptop      : 0.207  (GT=58)
+  AP@0.5 libro       : 0.114  (GT=88)
+  AP@0.5 moneda      : 0.000  (GT=168)
+  AP@0.5 mouse       : 0.003  (GT=60)
+
+Precision (score>=0.5): 0.000
+Recall    (score>=0.5): 0.000
+mAP@0.5: 0.065
+Cambio relativo medio de la media móvil por capa BN: mediana 0.60, máximo 0.85 (Conv_1_bn); cociente mediano nueva/antigua de la varianza móvil: mediana de capas 0.84
+conjunto       pérdida con estadísticas recalibradas (BN inferencia)
+train                                                         4.5338
+val                                                           4.6843
+Recalibrado (evaluate.py, score 0.5):
+AP@0.5 boligrafo   : 0.188  (GT=250)
+  AP@0.5 laptop      : 0.683  (GT=58)
+  AP@0.5 libro       : 0.389  (GT=88)
+  AP@0.5 moneda      : 0.032  (GT=168)
+  AP@0.5 mouse       : 0.266  (GT=60)
+
+Precision (score>=0.5): 0.755
+Recall    (score>=0.5): 0.059
+mAP@0.5: 0.311
+Recalibrado (score 0.2):
+Precision (score>=0.2): 0.276
+Recall    (score>=0.2): 0.345
+mAP@0.5: 0.311

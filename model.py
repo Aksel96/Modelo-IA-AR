@@ -32,6 +32,10 @@ def construir_ssd(num_clases=C.NUM_CLASES_CON_FONDO, img_size=C.IMG_SIZE):
     # IMPORTANTE: weights=None -> inicialización aleatoria, NO se descarga ImageNet.
     backbone = tf.keras.applications.MobileNetV2(
         input_shape=(img_size, img_size, 3), include_top=False, weights=None, alpha=1.0)
+    if C.BN_MOMENTUM_BACKBONE is not None:       # E6b: solo las BatchNorm del backbone (ver config.py)
+        for capa in backbone.layers:
+            if isinstance(capa, layers.BatchNormalization):
+                capa.momentum = C.BN_MOMENTUM_BACKBONE
 
     entrada = layers.Input((img_size, img_size, 3), name="imagen")
     # Entrada en [0,1] -> [-1,1], rango que espera MobileNetV2.

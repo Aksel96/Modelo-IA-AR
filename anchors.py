@@ -18,8 +18,16 @@ def generar_anchors() -> np.ndarray:
     for k, fs in enumerate(C.FEATURE_MAPS):
         s, s_sig = escalas[k], escalas[k + 1]
         r2 = math.sqrt(2.0)
-        whs = [(s, s), (math.sqrt(s * s_sig),) * 2, (s * r2, s / r2), (s / r2, s * r2)]
-        assert len(whs) == C.ANCHORS_POR_CELDA
+        r3 = math.sqrt(3.0)
+        whs = [
+            (s, s),                             # 1:1 base
+            (math.sqrt(s * s_sig),) * 2,        # 1:1 escala intermedia
+            (s * r2, s / r2),                   # 2:1 horizontal
+            (s / r2, s * r2),                   # 1:2 vertical
+            (s * r3, s / r3),                   # 3:1 horizontal (bolígrafos)
+            (s / r3, s * r3),                   # 1:3 vertical (bolígrafos)
+        ]
+        assert len(whs) == C.ANCHORS_POR_CELDA, f"len(whs)={len(whs)} != {C.ANCHORS_POR_CELDA}"
         for y in range(fs):
             for x in range(fs):
                 cx, cy = (x + 0.5) / fs, (y + 0.5) / fs

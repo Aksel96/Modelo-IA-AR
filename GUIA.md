@@ -63,7 +63,8 @@ Si funciona, **borra el contenido de `data/train` y `data/val`** (o las carpetas
 python train.py --epocas 150 --batch 16
 ```
 - Guarda el mejor modelo en `salida/best_model.keras` (menor `val_loss`).
-- Reduce el learning rate si la validación se estanca y se detiene sola si no mejora en 20 épocas.
+- Reduce el learning rate si la validación se estanca y se detiene sola si no mejora en 30 épocas (`PACIENCIA` en `config.py`, o `--paciencia`).
+- **Orientación EXIF:** si tus fotos traen etiqueta EXIF de orientación (fotos de celular), entrena y evalúa con `APLICAR_EXIF=1` (ver README); las cajas deben dibujarse sobre la imagen ya orientada.
 - Si te quedas sin memoria, baja `--batch` (8 o 4).
 
 ## 6. Evaluar
@@ -81,7 +82,7 @@ Genera `salida/detector.tflite` y `salida/labels.txt`.
 
 ## 8. Usarlo en la app de RA
 - Entrada: `[1, 256, 256, 3]` float32, píxeles en **[0, 1]**.
-- Salidas: `boxes [1, 1364, 4]` (ymin, xmin, ymax, xmax normalizado) y `scores [1, 1364, 6]` (índice 0 = fondo). Identifícalas por su shape.
+- Salidas: `boxes [1, 2046, 4]` (ymin, xmin, ymax, xmax normalizado) y `scores [1, 2046, 6]` (índice 0 = fondo). Identifícalas por su shape.
 - Por clase: descarta score < 0.5 y aplica NMS con IoU 0.45 (la app lo hace; no va dentro del modelo).
 - `labels.txt`: la línea N corresponde al índice N de `scores` (línea 0 = "fondo").
 
