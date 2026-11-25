@@ -1,0 +1,6 @@
+fondo
+boligrafo
+laptop
+libro
+moneda
+mouse

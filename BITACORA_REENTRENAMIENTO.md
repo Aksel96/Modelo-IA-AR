@@ -627,6 +627,24 @@ Cada checkpoint se recalibró con la bandera con la que se entrenó (`recalibrar
 
 **Estado de la decisión:** según el criterio acordado, **no se elige todavía el modelo para la app**. Datos para esa decisión: en el marco correcto el Run 6 es el mejor en todas las clases (0.877); requiere que el preprocesado de la app entregue imágenes orientadas, igual que lo necesitaría el Run 7 para rendir al máximo. Pendiente de decidir con el usuario.
 
+### 14.15 Modelo elegido para la app: Run 6, exportado a TFLite y verificado (25-nov-2026)
+**Decisión del usuario:** usar el **Run 6** (E6b-EXIF, `archivo/best_m6.keras`, SHA256 `24b06622…99d73`) en la app, sin cambiar código ni guías. Detalle completo en `diagnostico/export_m6/verificacion.txt`.
+
+**Pasos (ejecutados por el usuario en WSL2, un comando a la vez):** (1) `cp archivo/best_m6.keras salida/best_model.keras` (el Run 7 que había en `salida/` ya estaba archivado); (2) evaluación de control `APLICAR_EXIF=1 python evaluate.py --score 0.5` → mAP 0.877, idéntica al Run 6; (3) `python export_tflite.py --cuantizar` → `salida/detector.tflite` (3.18 MB) y `salida/labels.txt` (avisos de memoria CUDA al inicio, sin efecto).
+
+**Por qué en WSL:** el `.venv` de Windows (Keras 3.12.4) no carga con `load_model` los `.keras` guardados en WSL (Keras 3.16 nightly). Reconstruir la arquitectura con `construir_ssd()` + `load_weights` sí funciona (323/323 pesos; mismos AP por clase en Windows), pero el usuario prefirió exportar en WSL para no modificar `export_tflite.py`.
+
+**Archivos entregables (copiados a `archivo/`, SHA256 idénticos a `salida/`):** `archivo/detector_m6.tflite` (SHA256 `634d326066df46a40ff8b400882845f778b912a408cb0af6cbc78f7a9e2f399f`, 3,180,240 bytes) y `archivo/labels_m6.txt` (`fondo, boligrafo, laptop, libro, moneda, mouse`; SHA256 `0d1cd819…edb85`).
+
+**Verificación (Claude, `.venv` de Windows con el intérprete TFLite; `diagnostico/export_m6/verificar_tflite.py`):**
+- Entrada `[1,256,256,3]` float32; salidas `[1,2046,6]` (scores) y `[1,2046,4]` (boxes), **en ese orden**: la app debe identificarlas por shape.
+- Frente al modelo Keras en las 313 imágenes de val: |Δ cajas| medio 0.00017 (máx 0.0069), |Δ scores| medio 0.00001 (máx 0.033); misma clase top-1 en el 99.997 % de los anchors.
+- **mAP@0.5 del `.tflite` = 0.877** (boli 0.552, laptop 0.995, libro 0.902, moneda 0.979, mouse 0.956; P 0.921, R 0.651), igual que el Keras: la cuantización dinámica no tiene coste medible.
+
+**Requisitos para la app:** imagen **orientada** (sin orientar el mAP cae a 0.671, moneda 0.152); reescalado a 256×256 sin conservar proporción, RGB, [0,1] float32; por clase score ≥ 0.5 y NMS IoU 0.45; cajas (ymin, xmin, ymax, xmax) normalizadas. Pendiente de verificar en la app que los fotogramas llegan orientados.
+
+**Limitaciones (heredadas de §14.13–14.14):** mAP medido en val (usado también para elegir checkpoint y LR), un solo run; bolígrafo es la clase débil (0.55); el rendimiento en condiciones reales de la app no se ha medido.
+
 ---
 
 ## Comandos para sacar los datos rápido

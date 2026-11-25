@@ -1,0 +1,42 @@
+Exportación a TFLite del Run 6 (modelo para la app) - verificación (25-nov-2026)
+
+1) Preparación y exportación (ejecutadas por el usuario en WSL2, TF 2.22.0-rc1 / Keras 3.16 nightly, un comando a la vez):
+   cp archivo/best_m6.keras salida/best_model.keras            -> SHA256 24b06622f628b0a791b606072e74ea88185f8712d8ebbb1c3201708fb1b99d73 (verificado)
+   APLICAR_EXIF=1 python evaluate.py --score 0.5                -> control: boli 0.552, laptop 0.995, libro 0.901, moneda 0.979,
+                                                                   mouse 0.956; P 0.921, R 0.657; mAP 0.877 (= Run 6)
+   python export_tflite.py --cuantizar                          -> salida/detector.tflite (3.18 MB) + salida/labels.txt
+   (avisos CUDA_ERROR_OUT_OF_MEMORY al reservar memoria de GPU al inicio; sin efecto: la exportación terminó correctamente)
+
+2) Archivos para la app (copiados a archivo/ por Claude, SHA256 idénticos a salida/):
+   archivo/detector_m6.tflite  SHA256 634d326066df46a40ff8b400882845f778b912a408cb0af6cbc78f7a9e2f399f  (3,180,240 bytes)
+   archivo/labels_m6.txt       SHA256 0d1cd819d55fb29cf42a8ae4a55af79769ad74e69f6f7d69be6f2be7461edb85
+   labels: fondo, boligrafo, laptop, libro, moneda, mouse (línea N = índice N de scores)
+
+3) Verificación (Claude, .venv de Windows: Python 3.10.11, TF 2.21.0, Keras 3.12.4, CPU; solo lectura):
+   APLICAR_EXIF=1 python -B diagnostico/export_m6/verificar_tflite.py
+   - Entrada: [1, 256, 256, 3] float32
+   - Salidas: StatefulPartitionedCall_1:1 [1, 2046, 6] float32 (scores) y StatefulPartitionedCall_1:0 [1, 2046, 4] float32 (boxes)
+     -> el orden de salidas NO es boxes, scores: la app debe identificarlas por shape.
+   - Comparación con el modelo Keras (313 imágenes de val): |Δ cajas| máx 0.0069, medio 0.000173;
+     |Δ scores| máx 0.0325, medio 0.000011; misma clase top-1 en el 99.9973 % de los anchors; softmax suma 1.
+   - mAP del .tflite (val, APLICAR_EXIF=1, score 0.5, IoU 0.5):
+       AP@0.5 boligrafo   : 0.552  (GT=250)
+       AP@0.5 laptop      : 0.995  (GT=58)
+       AP@0.5 libro       : 0.902  (GT=88)
+       AP@0.5 moneda      : 0.979  (GT=168)
+       AP@0.5 mouse       : 0.956  (GT=60)
+     Precision (score>=0.5): 0.921
+     Recall    (score>=0.5): 0.651
+     mAP@0.5: 0.877
+   -> la cuantización dinámica no tiene coste medible (Keras: mAP 0.877, recall 0.657).
+   Aviso del intérprete: tf.lite.Interpreter está obsoleto en favor de LiteRT (ai_edge_litert); no afecta al archivo .tflite.
+
+4) Compatibilidad Windows/WSL: el .venv de Windows (Keras 3.12.4) NO carga con load_model los .keras guardados en WSL
+   (Keras 3.16 nightly: TypeError "Functional could not be deserialized"). Sí funciona reconstruir la arquitectura con
+   construir_ssd() + load_weights (323/323 pesos; evaluate en Windows da los mismos AP por clase, mAP 0.876 por redondeo;
+   diagnostico/export_m6/evaluar_m6_windows.py). Por eso la exportación se hizo en WSL sin cambiar código.
+
+Requisitos de la app (paso 8 de GUIA.md + hallazgos del proyecto):
+   - Imagen ORIENTADA (rotación EXIF / de la cámara aplicada): sin orientar el mAP del Run 6 cae a 0.671 (moneda 0.152).
+   - Reescalar a 256x256 sin conservar proporción (igual que en el entrenamiento: bilineal), RGB, píxeles en [0, 1] float32.
+   - Por clase 1..5: descartar score < 0.5 y NMS con IoU 0.45; cajas (ymin, xmin, ymax, xmax) normalizadas a [0, 1].
