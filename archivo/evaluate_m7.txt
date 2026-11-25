@@ -1,0 +1,16 @@
+Run 7 (E6b-Legacy: APLICAR_EXIF=0, BN_MOMENTUM_BACKBONE=0.99, semilla 42) sin recalibrar, en su marco de entrenamiento - salida de evaluate.py
+Comando: APLICAR_EXIF=0 python evaluate.py --modelo archivo/best_m7.keras --score 0.5
+Modelo evaluado: archivo/best_m7.keras, SHA256 86713516ebb688edda4d7eebea2236210db6a29fbc5417692385251727538375b (mejor val_loss 2.6696, época 113)
+Configuración impresa por train.py: APLICAR_EXIF=0 | BN_MOMENTUM_BACKBONE=0.99 (None = 0.999 de Keras) | semilla=42 | batch=16 | lr=0.001
+Aviso: en este marco (sin orientación EXIF) las cajas de val de las imágenes con EXIF 3/6/8 (moneda y laptop) no coinciden con los píxeles.
+Transcrito de la salida que pegó el usuario (ejecutada por el usuario en WSL2, TF 2.22.0-rc1, GPU); las líneas de log de TF/XLA se omiten.
+
+  AP@0.5 boligrafo   : 0.517  (GT=250)
+  AP@0.5 laptop      : 0.981  (GT=58)
+  AP@0.5 libro       : 0.849  (GT=88)
+  AP@0.5 moneda      : 0.382  (GT=168)
+  AP@0.5 mouse       : 0.912  (GT=60)
+
+Precision (score>=0.5): 0.870
+Recall    (score>=0.5): 0.450
+mAP@0.5: 0.728

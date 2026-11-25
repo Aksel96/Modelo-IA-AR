@@ -1,0 +1,17 @@
+Run 7 con BN recalibrado (E6a), evaluado en el marco correcto (APLICAR_EXIF=1) - salida de evaluate.py
+Comando: APLICAR_EXIF=1 python evaluate.py --modelo archivo/best_m7_bnrecal.keras --score 0.5
+Modelo evaluado: archivo/best_m7_bnrecal.keras, SHA256 be80c8705366fee1972f2ffd50b22c1829dcd140861b0feb3282a6cbfbae2de9
+Derivado de archivo/best_m7.keras (SHA256 86713516ebb688edda4d7eebea2236210db6a29fbc5417692385251727538375b) con recalibrar_bn.py
+(APLICAR_EXIF=0 = bandera de entrenamiento, 3 pasadas, momentum 0.9, semilla 0; 116/116 estadísticas cambiadas, 0 pesos más;
+ver archivo/best_m7_bnrecal.recal.json). Referencia: el Run 7 original en el mismo marco da mAP 0.810 (diagnostico/run5/e6b_cruzada.txt, C4).
+Transcrito de la salida que pegó el usuario (ejecutada por el usuario en WSL2, TF 2.22.0-rc1, GPU); las líneas de log de TF/XLA se omiten.
+
+  AP@0.5 boligrafo   : 0.502  (GT=250)
+  AP@0.5 laptop      : 0.978  (GT=58)
+  AP@0.5 libro       : 0.847  (GT=88)
+  AP@0.5 moneda      : 0.772  (GT=168)
+  AP@0.5 mouse       : 0.868  (GT=60)
+
+Precision (score>=0.5): 0.875
+Recall    (score>=0.5): 0.484
+mAP@0.5: 0.793

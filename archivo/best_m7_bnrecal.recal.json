@@ -1,0 +1,22 @@
+{
+  "origen": "archivo/best_m7.keras",
+  "origen_sha256": "86713516ebb688eda4d7eebea2236210db6a29fbc5417692385251727538375b",
+  "derivado": "archivo/best_m7_bnrecal.keras",
+  "derivado_sha256": "be80c8705366fee1972f2ffd50b22c1829dcd140861b0feb3282a6cbfbae2de9",
+  "aplicar_exif": false,
+  "pasadas": 3,
+  "momentum_recalibracion": 0.9,
+  "semilla": 0,
+  "max_lotes": null,
+  "imagenes_train_disponibles": 1097,
+  "pasos_de_lote": 207,
+  "batch_size": 16,
+  "pesos_totales": 323,
+  "estadisticas_bn": 116,
+  "estadisticas_cambiadas": 116,
+  "estadisticas_sin_cambio": 0,
+  "pesos_no_estadistica_cambiados": 0,
+  "tensorflow": "2.22.0-rc1",
+  "keras": "3.16.0.dev2026111903",
+  "fecha": "2026-11-25T02:52:11"
+}

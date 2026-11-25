@@ -33,3 +33,44 @@ Lectura:
 - C2 NO es una métrica válida del modelo: con APLICAR_EXIF=0 las cajas de val de esas imágenes están en el marco orientado
   y los píxeles no, así que la caída mezcla el fallo del modelo sobre imágenes sin orientar con el desajuste etiqueta-píxel.
   Lo que sí muestra: el modelo debe recibir imágenes orientadas en inferencia (implicación para la app, por verificar).
+
+==========================================================================================================
+Modelo: archivo/best_m7.keras, SHA256 86713516ebb688edda4d7eebea2236210db6a29fbc5417692385251727538375b
+(Run 7 = E6b-Legacy: entrenado con APLICAR_EXIF=0, BN_MOMENTUM_BACKBONE=0.99, semilla 42; mejor val_loss 2.6696 en la época 113)
+
+--- C3. Marco de entrenamiento: APLICAR_EXIF=0 python evaluate.py --modelo archivo/best_m7.keras --score 0.5
+  (misma salida que archivo/evaluate_m7.txt; cajas de val de las imágenes con EXIF 3/6/8 desalineadas con los píxeles)
+  AP@0.5 boligrafo   : 0.517  (GT=250)
+  AP@0.5 laptop      : 0.981  (GT=58)
+  AP@0.5 libro       : 0.849  (GT=88)
+  AP@0.5 moneda      : 0.382  (GT=168)
+  AP@0.5 mouse       : 0.912  (GT=60)
+Precision (score>=0.5): 0.870
+Recall    (score>=0.5): 0.450
+mAP@0.5: 0.728
+
+--- C4. Marco correcto (cajas alineadas con los píxeles): APLICAR_EXIF=1 python evaluate.py --modelo archivo/best_m7.keras --score 0.5
+  AP@0.5 boligrafo   : 0.517  (GT=250)
+  AP@0.5 laptop      : 0.982  (GT=58)
+  AP@0.5 libro       : 0.848  (GT=88)
+  AP@0.5 moneda      : 0.809  (GT=168)
+  AP@0.5 mouse       : 0.896  (GT=60)
+Precision (score>=0.5): 0.890
+Recall    (score>=0.5): 0.495
+mAP@0.5: 0.810
+
+Comparación en el mismo marco correcto (C1 frente a C4; un solo run por condición):
+                 Run 6 (EXIF)   Run 7 (Legacy)   diferencia
+  boligrafo         0.552          0.517          +0.035
+  laptop            0.995          0.982          +0.013
+  libro             0.901          0.848          +0.053
+  moneda            0.979          0.809          +0.170
+  mouse             0.956          0.896          +0.060
+  mAP               0.877          0.810          +0.067
+Lectura:
+- Run 7 entre C3 y C4: bolígrafo y libro casi idénticos (sin EXIF), laptop +0.001, mouse -0.016 (sin EXIF: ruido entre
+  procesos, dentro de ±0.03); moneda 0.382 -> 0.809: con las cajas alineadas el modelo legacy detecta bien gran parte de las
+  monedas; su 0.382 en C3 se debía sobre todo al desajuste etiqueta-píxel de la evaluación.
+- Entrenar con EXIF da moneda +0.170 en el marco correcto (efecto grande frente al ruido, pero un solo run).
+- El Run 6 también supera al Run 7 en las clases sin EXIF (+0.035 a +0.060): no atribuible a EXIF con estos datos
+  (posible variabilidad entre entrenamientos, no medida; o efecto indirecto de entrenar con etiquetas desalineadas: hipótesis).

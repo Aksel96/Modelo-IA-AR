@@ -593,6 +593,40 @@ Cada checkpoint se recalibró con la bandera con la que se entrenó (`recalibrar
 
 **Limitaciones:** un solo run (la variabilidad entre entrenamientos sigue sin conocerse; `--semilla` no reproduce los aumentos ni la GPU); no hay conjunto de prueba independiente y val se usó para elegir el checkpoint y para el LR (el 0.877 es algo optimista); bolígrafo sigue siendo la clase débil (0.552), coherente con su cobertura de anchors (§14). **No se elige modelo para la app** hasta comparar con el Run 7 (E6b-Legacy).
 
+### 14.14 Run 7 = E6b-Legacy y comparación final E6b (entrenado y evaluado por el usuario en WSL2, 25-nov-2026)
+**Configuración (impresa por `train.py`):** `APLICAR_EXIF=0 | BN_MOMENTUM_BACKBONE=0.99 | semilla=42 | batch=16 | lr=0.001`, GPU. Comando: `APLICAR_EXIF=0 BN_MOMENTUM_BACKBONE=0.99 python train.py --epocas 150 --semilla 42`. Idéntico al Run 6 salvo `APLICAR_EXIF` (y la variación no controlable de aumentos y GPU, §14.12).
+
+**Archivos:** `archivo/best_m7.keras` (SHA256 `86713516ebb688edda4d7eebea2236210db6a29fbc5417692385251727538375b`), `archivo/historial_m7.csv` (143 épocas), `archivo/evaluate_m7.txt` (marco EXIF=0), `archivo/best_m7_bnrecal.keras` (SHA256 `be80c8705366fee1972f2ffd50b22c1829dcd140861b0feb3282a6cbfbae2de9`) + `.recal.json` (recalibrado con `APLICAR_EXIF=0`), `archivo/evaluate_m7_bnrecal.txt`, `diagnostico/run5/e6b_cruzada.txt` (C1–C4). Hashes comprobados por Claude desde Windows (copias idénticas a `salida/`; `best_m6.keras` intacto).
+
+**Entrenamiento (`historial_m7.csv`):** mejor `val_loss` **2.6696 en la época 113**, parada en la 143 (113 + 30); baja sostenida sin divergencia, como el Run 6; LR 1e-3 hasta la época 33 y luego reducciones hasta 1e-6 (época 128). `loss` final ≈ 2.1–2.2 (Run 6: ≈ 1.4). La `val_loss` **no es comparable** con la del Run 6: con EXIF=0, 247 imágenes de train y val tienen cajas desalineadas con los píxeles, así que la pérdida mide otra cosa (hipótesis: esa contradicción explica la `loss` más alta).
+
+**Tabla final (val, score 0.5 para precisión/recall, IoU 0.5; AP independiente del score). Marco de evaluación indicado; el marco correcto (cajas alineadas con los píxeles) es EXIF=1:**
+
+| AP@0.5 | Run 4 recal.¹ (E=0) | Run 5 recal.¹ (E=1) | **Run 6** (E=1) | Run 6 recal. (E=1) | Run 7 (E=0)² | **Run 7** (E=1) | Run 7 recal. (E=1) |
+|---|---|---|---|---|---|---|---|
+| bolígrafo | 0.189 | 0.058 | **0.552** | 0.533 | 0.517 | **0.517** | 0.502 |
+| laptop | 0.647 | 0.521 | **0.995** | 0.991 | 0.981 | **0.982** | 0.978 |
+| libro | 0.369 | 0.289 | **0.901** | 0.909 | 0.849 | **0.848** | 0.847 |
+| moneda | 0.033 | 0.332 | **0.979** | 0.980 | 0.382 | **0.809** | 0.772 |
+| mouse | 0.261 | 0.210 | **0.956** | 0.923 | 0.912 | **0.896** | 0.868 |
+| **mAP@0.5** | 0.300 | 0.282 | **0.877** | 0.867 | 0.728 | **0.810** | 0.793 |
+| Precisión / recall | — | — | 0.921 / 0.657 | 0.902 / 0.635 | 0.870 / 0.450 | 0.890 / 0.495 | 0.875 / 0.484 |
+
+¹ Medias de las semillas 0/1/2 (§14.11), cada uno en su marco de entrenamiento; Run 4 en EXIF=1: 0.297 (§14.10.5). ² Marco de entrenamiento del Run 7; no válido para moneda/laptop (cajas desalineadas).
+
+**Hechos:**
+- **BN es el factor dominante.** Con momentum 0.99 ambos runs superan con amplitud la meta de 0.50: Run 7 (misma configuración que el Run 4 salvo el momentum, y época elegida por la `val_loss`) **0.810** frente a ≈ 0.30 del Run 4 recalibrado; Run 6 **0.877** frente a 0.282 del Run 5 recalibrado.
+- **Recalibrar ya no aporta con momentum 0.99:** Run 6 0.877 → 0.867 (−0.010), Run 7 0.810 → 0.793 (−0.017). En ambos baja algo (2 de 2; por clase hasta −0.037, moneda del Run 7): los checkpoints originales son los que se usan. Hipótesis no probada de la leve bajada: la recalibración estima las estadísticas sin aumentos, mientras que el entrenamiento las estimó con ellos.
+- **EXIF en el mismo marco correcto (Run 6 frente a Run 7, EXIF=1):** moneda **+0.170** (0.979 frente a 0.809), mAP +0.067. El efecto en moneda es grande frente al ruido de evaluación (cota por clase ≈ 0.02–0.03).
+- **El 0.382 de moneda del Run 7 en su propio marco era sobre todo un artefacto de evaluación:** con las cajas alineadas sube a 0.809; bolígrafo y libro dan el mismo AP en ambos marcos (no tienen EXIF), laptop +0.001, mouse −0.016 (ruido).
+- **Ambos modelos rinden mejor con imágenes orientadas** (Run 6: 0.877 frente a 0.671 sin orientar; Run 7: 0.810 frente a 0.728): la app debe entregar fotogramas orientados en cualquier caso.
+
+**No demostrado:** el Run 6 también supera al Run 7 en clases sin EXIF (bolígrafo +0.035, libro +0.053, mouse +0.060, laptop +0.013). Con un run por condición no se separa de la variabilidad entre entrenamientos (no medida); un efecto indirecto de entrenar con etiquetas desalineadas es solo una hipótesis. Tampoco está aislado cuánto del salto se debe al BN correcto en sí y cuánto al entrenamiento más largo con LR decreciente que la `val_loss` fiable permite (hipótesis de §14.13).
+
+**Limitaciones:** un solo run por condición; sin conjunto de prueba independiente (val eligió checkpoint y LR; resultados algo optimistas); bolígrafo sigue siendo la clase débil (0.50–0.55) en todas las condiciones.
+
+**Estado de la decisión:** según el criterio acordado, **no se elige todavía el modelo para la app**. Datos para esa decisión: en el marco correcto el Run 6 es el mejor en todas las clases (0.877); requiere que el preprocesado de la app entregue imágenes orientadas, igual que lo necesitaría el Run 7 para rendir al máximo. Pendiente de decidir con el usuario.
+
 ---
 
 ## Comandos para sacar los datos rápido
